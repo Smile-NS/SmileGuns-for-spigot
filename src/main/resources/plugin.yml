@@ -1,0 +1,34 @@
+name: SmileGuns
+version: ${project.version}
+main: gun.m4.M4
+api-version: 1.16
+authors: [Smile_NS]
+
+commands:
+  gun:
+    usage: /gun [args]
+
+permissions:
+  gun.give:
+    default: op
+
+アップデート内容:
+  sml.1.1.1:
+    - バージョンの表記法を「sml-〇.△.□」から「sml.〇.△.□」に変更
+    - バグの修正（修正済みバグ一覧を参照）
+    - コマンドのアップデート（コマンドのアップデート内容を参照）
+
+コマンドのアップデート内容:
+  sml.1.1.1:
+    - /gun get...を/gun give...に変更
+    - /gun give...でセレクターが見つからなかった場合に発生する例外をPlayerNotFoundExceptionに変更
+    - コマンドにメッセージを追加
+
+修正済みバグ一覧:
+  sml.1.1.1:
+    - 感圧版に乗ると大量に連射される
+    - スペクテイターで銃が撃ててしまう
+    - スペクテイター&クリエイティブでもダメージが入る
+    - ダメージアニメーションがない
+    - クロスボウ＆石剣が使えない
+    - 跳弾のサウンドの有効条件
