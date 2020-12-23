@@ -73,7 +73,7 @@ public class WriteConfig implements ConfigNode{
 
         if (!config.contains(FLYING_DISTANCE)) setFlyingDistance(50);
         if (!config.contains(SHOT_CONT)) setShotCount(3);
-        if (!config.contains(BULLET_MAX_SWING)) setBulletMaxSwing(10);
+        if (!config.contains(BULLET_MAX_SWING)) setBulletMaxSwing(7);
         if (!config.contains(DAMAGE)) setDamage(4);
     }
 

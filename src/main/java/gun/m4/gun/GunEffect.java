@@ -66,15 +66,23 @@ public class GunEffect extends GunListener{
     }
 
     public void recoil1(){
+        Location loc = player.getLocation();
+        final float SWING = 2.0f;
+
+        int random = (int) (Math.random() * 3);
+        float yaw = loc.getYaw();
+        if (random == 0) loc.setYaw(yaw + SWING);
+        else if (random == 1) loc.setYaw(yaw - SWING);
+
         BukkitRunnable task = new BukkitRunnable() {
             private int count = 0;
 
             public void run() {
                 count++;
-                Location loc = player.getLocation();
 
-                if (count == 1) loc.setPitch(loc.getPitch() - 2);
-                else if (count == 2) loc.setPitch(loc.getPitch() + 2);
+                float pitch = loc.getPitch();
+                if (count == 1) loc.setPitch(pitch - SWING);
+                else if (count == 2) loc.setPitch(pitch + SWING);
                 else if (count == 3) {
                     cancel();
                     return;
@@ -108,6 +116,7 @@ public class GunEffect extends GunListener{
     public static void onSneak(Player player){
         ItemStack item = player.getInventory().getItemInMainHand();
         if(item.getType() != CROSSBOW) return;
+        if (!GunCreate.isGun(item)) return;
 
         if (player.isSneaking()) {
             GunCreate.setGun(item, 1, GunCreate.getBulletAmount(item));

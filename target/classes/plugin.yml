@@ -1,5 +1,5 @@
 name: SmileGuns
-version: sml.1.1.1
+version: sml.1.1.2
 main: gun.m4.M4
 api-version: 1.16
 authors: [Smile_NS]
@@ -12,11 +12,17 @@ permissions:
   gun.give:
     default: op
 
+GitHub: https://github.com/Smile-NS/SmileGuns-for-spigot
+
 アップデート内容:
   sml.1.1.1:
     - バージョンの表記法を「sml-〇.△.□」から「sml.〇.△.□」に変更
     - バグの修正（修正済みバグ一覧を参照）
     - コマンドのアップデート（コマンドのアップデート内容を参照）
+  sml.1.1.2:
+    - 横方向のリコイルを追加
+    - 弾のデフォルト散弾角度を10から7に変更
+    - バグの修正（修正済みバグ一覧を参照）
 
 コマンドのアップデート内容:
   sml.1.1.1:
@@ -32,3 +38,5 @@ permissions:
     - ダメージアニメーションがない
     - クロスボウ＆石剣が使えない
     - 跳弾のサウンドの有効条件
+  sml.1.1.2:
+    - 通常のクロスボウでADSモードになってしまう

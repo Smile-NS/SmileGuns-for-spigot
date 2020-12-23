@@ -9,7 +9,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -21,7 +20,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.List;
 import java.util.Objects;
 
-import static org.bukkit.Bukkit.getServer;
 import static org.bukkit.Material.CROSSBOW;
 
 public class GunListener extends GunCreate{

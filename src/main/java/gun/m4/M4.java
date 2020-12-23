@@ -13,9 +13,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public final class M4 extends JavaPlugin implements Listener {
     public void onEnable() {
         // Plugin startup logic
         Bukkit.getServer().getPluginManager().registerEvents(this,this);
+
         new WriteConfig().setDefaultAll();
         saveConfig();
 
@@ -84,8 +88,8 @@ public final class M4 extends JavaPlugin implements Listener {
         if(!(entity instanceof Player)) return;
 
         Player player = (Player) entity;
-        if (player.getInventory().getItemInMainHand().getType() == GunCreate.getReloadingItemType())
-            event.setCancelled(true);
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (GunCreate.isGun(item)) event.setCancelled(true);
     }
 
     @EventHandler

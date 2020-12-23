@@ -6,7 +6,7 @@
 
     <groupId>gun</groupId>
     <artifactId>SmileGuns</artifactId>
-    <version>sml.1.1.1</version>
+    <version>sml.1.1.2</version>
     <packaging>jar</packaging>
 
     <name>SmileGuns</name>
