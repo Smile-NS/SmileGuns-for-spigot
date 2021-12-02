@@ -3,7 +3,7 @@ package gun.m4.commands.gun;
 import gun.m4.exceptions.IncorrectArgsException;
 import gun.m4.exceptions.NotHasPermissionException;
 import gun.m4.exceptions.PlayerNotFoundException;
-import gun.m4.gun.GunCreate;
+import gun.m4.gun.GunConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -40,7 +40,7 @@ public class GunCmd {
         Inventory inv = target.getInventory();
         switch (args[1]) {
             case "m4a1":
-                inv.addItem(GunCreate.setGun(new ItemStack(Material.CROSSBOW), 1, 0));
+                inv.addItem(GunConfig.setGun(new ItemStack(Material.CROSSBOW), 1, 0));
                 break;
             default:
                 throw new IncorrectArgsException(sender);

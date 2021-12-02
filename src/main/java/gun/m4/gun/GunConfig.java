@@ -4,6 +4,7 @@ import gun.m4.WriteConfig;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CrossbowMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -18,7 +19,7 @@ import static org.bukkit.ChatColor.*;
 import static org.bukkit.Material.*;
 import static org.bukkit.inventory.ItemFlag.*;
 
-public class GunCreate extends WriteConfig {
+public class GunConfig extends WriteConfig {
 
     public static double playerBaseSpeed = 0.1;
     public static final NamespacedKey GUN_TYPE = new NamespacedKey(WriteConfig.PLUGIN, "type");
@@ -88,12 +89,9 @@ public class GunCreate extends WriteConfig {
         meta.setCustomModelData(modelData);
         meta.setDisplayName(getGunName());
 
-        meta.addItemFlags(HIDE_ATTRIBUTES);
-        meta.addItemFlags(HIDE_DESTROYS);
-        meta.addItemFlags(HIDE_ENCHANTS);
-        meta.addItemFlags(HIDE_PLACED_ON);
-        meta.addItemFlags(HIDE_UNBREAKABLE);
-        meta.addItemFlags(HIDE_POTION_EFFECTS);
+        ItemFlag[] flags = { HIDE_ATTRIBUTES, HIDE_DESTROYS, HIDE_ENCHANTS,
+                HIDE_PLACED_ON, HIDE_UNBREAKABLE, HIDE_POTION_EFFECTS };
+        for (ItemFlag flag : flags) meta.addItemFlags(flag);
 
         List<String> lore = new ArrayList<>(Arrays.asList(
                 YELLOW + "RIGHT-CLICK: SHOT",
@@ -104,8 +102,8 @@ public class GunCreate extends WriteConfig {
         meta.setLore(lore);
 
         PersistentDataContainer data = meta.getPersistentDataContainer();
-        data.set(GunCreate.BULLET_AMOUNT, PersistentDataType.INTEGER, bulletAmount);
-        data.set(GunCreate.GUN_TYPE, PersistentDataType.STRING, GunType.M4A1.name());
+        data.set(BULLET_AMOUNT, PersistentDataType.INTEGER, bulletAmount);
+        data.set(GUN_TYPE, PersistentDataType.STRING, GunType.M4A1.name());
 
         gun.setItemMeta(meta);
         setArrow(gun);
@@ -118,7 +116,7 @@ public class GunCreate extends WriteConfig {
         meta.setLore(lore);
 
         PersistentDataContainer data = meta.getPersistentDataContainer();
-        data.set(GunCreate.BULLET_AMOUNT, PersistentDataType.INTEGER, bulletAmount);
+        data.set(BULLET_AMOUNT, PersistentDataType.INTEGER, bulletAmount);
 
         gun.setItemMeta(meta);
         setArrow(gun);
@@ -134,12 +132,12 @@ public class GunCreate extends WriteConfig {
 
     public static int getBulletAmount(ItemStack item){
         ItemMeta meta = item.getItemMeta();
-        return meta.getPersistentDataContainer().get(GunCreate.BULLET_AMOUNT, PersistentDataType.INTEGER);
+        return meta.getPersistentDataContainer().get(BULLET_AMOUNT, PersistentDataType.INTEGER);
     }
 
     public static GunType getGunType(ItemStack item){
         ItemMeta meta = item.getItemMeta();
-        String type = meta.getPersistentDataContainer().get(GunCreate.GUN_TYPE, PersistentDataType.STRING);
+        String type = meta.getPersistentDataContainer().get(GUN_TYPE, PersistentDataType.STRING);
         return GunType.valueOf(type);
     }
 

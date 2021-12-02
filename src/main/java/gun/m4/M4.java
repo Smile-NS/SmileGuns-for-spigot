@@ -2,23 +2,15 @@ package gun.m4;
 
 import gun.m4.commands.Complement;
 import gun.m4.commands.SendCommand;
-import gun.m4.gun.GunCreate;
-import gun.m4.gun.GunEffect;
 import gun.m4.gun.GunListener;
-import gun.m4.gun.Reload;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.*;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -36,7 +28,9 @@ public final class M4 extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        Bukkit.getServer().getPluginManager().registerEvents(this,this);
+        PluginManager manager = Bukkit.getServer().getPluginManager();
+        manager.registerEvents(this,this);
+        manager.registerEvents(new GunListener(this), this);
 
         new WriteConfig().setDefaultAll();
         saveConfig();
@@ -55,59 +49,11 @@ public final class M4 extends JavaPlugin implements Listener {
     public void onDisable() {
         // Plugin shutdown logic
     }
-    
+
     @EventHandler
     public void PlayerJoinEvent(PlayerJoinEvent event){
         Player player = event.getPlayer();
         sendPackRequest(player);
-    }
-
-    @EventHandler
-    public void PlayerInteractEvent(PlayerInteractEvent event){
-        Player player = event.getPlayer();
-        OnClick click = new OnClick(player, event);
-        click.onRightClick();
-        click.onLeftClick();
-    }
-
-    @EventHandler
-    public void PlayerDropItemEvent(PlayerDropItemEvent event){
-        Player player = event.getPlayer();
-        new Reload(player).reloadByDropping(event, GunCreate.getBulletMaxAmount());
-    }
-
-    @EventHandler
-    public void PlayerItemHeldEvent(PlayerItemHeldEvent event){
-        Player player = event.getPlayer();
-        Reload.changeSlot(player, event);
-    }
-
-    @EventHandler
-    public void EntityDamageByEntityEvent(EntityDamageByEntityEvent event){
-        Entity entity = event.getDamager();
-        if(!(entity instanceof Player)) return;
-
-        Player player = (Player) entity;
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (GunCreate.isGun(item)) event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void PlayerToggleSneakEvent(PlayerToggleSneakEvent event){
-        Player player = event.getPlayer();
-        GunEffect.onSneak(player);
-    }
-
-    @EventHandler
-    public void PlayerSwapHandItemsEvent(PlayerSwapHandItemsEvent event){
-        Player player = event.getPlayer();
-        GunListener.cancelChangingHand(event, player);
-    }
-
-    @EventHandler
-    public void InventoryClickEvent(InventoryClickEvent event){
-        Player player = (Player) event.getWhoClicked();
-        GunListener.cancelChangingHand(event, player);
     }
 
     @Override

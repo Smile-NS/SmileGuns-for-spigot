@@ -2,9 +2,7 @@ package gun.m4;
 
 import org.bukkit.Material;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.bukkit.ChatColor.GREEN;
 import static org.bukkit.Material.*;
@@ -30,7 +28,7 @@ public class WriteConfig implements ConfigNode{
     public void setDefaultShot(){
         if (!config.contains(NOT_COLLISION)){
             List<String> typeList = new ArrayList<>();
-            List<Material> noCollision = new ArrayList<>(Arrays.asList(
+            Set<Material> noCollision = new HashSet<>(Arrays.asList(
                     TRIPWIRE_HOOK, TRIPWIRE, AIR, CAVE_AIR, VOID_AIR,
                     GRASS, TALL_GRASS, FERN, LARGE_FERN, SUNFLOWER,
                     LILAC, ROSE_BUSH, PEONY, KELP, KELP_PLANT,
@@ -41,17 +39,17 @@ public class WriteConfig implements ConfigNode{
                     MELON_STEM, ATTACHED_MELON_STEM, PUMPKIN_STEM, ATTACHED_PUMPKIN_STEM, CARROTS,
                     BEETROOTS, WATER, LAVA, KELP, KELP_PLANT
             ));
-            for (Material type : noCollision) typeList.add(type.name());
-            for (Material type : BUTTONS.getValues()) typeList.add(type.name());
-            for (Material type : CARPETS.getValues()) typeList.add(type.name());
-            for (Material type : CORALS.getValues()) typeList.add(type.name());
-            for (Material type : RAILS.getValues()) typeList.add(type.name());
-            for (Material type : SAPLINGS.getValues()) typeList.add(type.name());
-            for (Material type : SMALL_FLOWERS.getValues()) typeList.add(type.name());
-            for (Material type : WOODEN_PRESSURE_PLATES.getValues()) typeList.add(type.name());
-            for (Material type : BANNERS.getValues()) typeList.add(type.name());
-            for (Material type : SIGNS.getValues()) typeList.add(type.name());
 
+            List<Set<Material>> materials = new ArrayList<>(Arrays.asList(
+                    noCollision,
+                    BUTTONS.getValues(), CARPETS.getValues(), CORALS.getValues(),
+                    RAILS.getValues(), SAPLINGS.getValues(), SMALL_FLOWERS.getValues(),
+                    WOODEN_PRESSURE_PLATES.getValues(), BANNERS.getValues(), SIGNS.getValues()
+                    ));
+
+            for (Set<Material> set : materials) {
+                for (Material type : set) typeList.add(type.name());
+            }
             setNotCollision(typeList);
         }
 

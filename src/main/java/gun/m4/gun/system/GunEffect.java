@@ -1,21 +1,17 @@
-package gun.m4.gun;
+package gun.m4.gun.system;
 
 import gun.m4.Calculation;
+import gun.m4.gun.GunConfig;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.type.Door;
-import org.bukkit.block.data.type.Gate;
-import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
@@ -28,24 +24,21 @@ import java.util.Set;
 import static org.bukkit.Bukkit.getServer;
 import static org.bukkit.Material.*;
 
-public class GunEffect extends GunListener{
+public class GunEffect extends Moving {
     
-    private final Player player;
-
     private static final ScoreboardManager manager = Bukkit.getScoreboardManager();
     private static final Scoreboard board = manager.getMainScoreboard();
 
-    public GunEffect(Player player, PlayerInteractEvent event){
-        super(player, event);
-        this.player = player;
+    public GunEffect(Player player, Plugin plugin){
+        super(player, plugin);
     }
 
     public boolean isCollisionBlock(Block block){
-        return !GunCreate.getNotCollision().contains(block.getType());
+        return !GunConfig.getNotCollision().contains(block.getType());
     }
 
     public void breakGlass(Block block){
-        if (!GunCreate.getCanBreakBlock().contains(block.getType())) return;
+        if (!GunConfig.getCanBreakBlock().contains(block.getType())) return;
         Location loc = block.getLocation();
         loc.getWorld().spawnParticle(
                 Particle.BLOCK_CRACK, loc.add(0.5, 0.5, 0.5), 30, 0.3, 0.3, 0.3,0, block.getBlockData());
@@ -55,7 +48,9 @@ public class GunEffect extends GunListener{
 
     public void hitEffect(Location loc){
         List<Player> playerList = new ArrayList<>(getServer().getOnlinePlayers());
+        World world = player.getWorld();
         for (Player listener : playerList) {
+            if (world != listener.getWorld()) continue;
             double distance = loc.distance(listener.getLocation());
             if (distance > 5) continue;
             listener.playSound(loc, "guns.bullets-bounce", 0.5f, 1.0f);
@@ -67,30 +62,14 @@ public class GunEffect extends GunListener{
 
     public void recoil1(){
         Location loc = player.getLocation();
-        final float SWING = 2.0f;
 
         int random = (int) (Math.random() * 3);
         float yaw = loc.getYaw();
-        if (random == 0) loc.setYaw(yaw + SWING);
-        else if (random == 1) loc.setYaw(yaw - SWING);
+        if (random == 0) loc.setYaw(yaw + 1);
+        else if (random == 1) loc.setYaw(yaw - 1);
 
-        BukkitRunnable task = new BukkitRunnable() {
-            private int count = 0;
-
-            public void run() {
-                count++;
-
-                float pitch = loc.getPitch();
-                if (count == 1) loc.setPitch(pitch - SWING);
-                else if (count == 2) loc.setPitch(pitch + SWING);
-                else if (count == 3) {
-                    cancel();
-                    return;
-                }
-                player.teleport(loc);
-            }
-        };
-        task.runTaskTimer(PLUGIN, 0L, 2L);
+        taskList.add(this);
+        if (!running) runTask();
     }
 
     public void recoil2(){
@@ -111,20 +90,6 @@ public class GunEffect extends GunListener{
         TextComponent component = new TextComponent();
         component.setText("<<" + display + ">>");
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
-    }
-
-    public static void onSneak(Player player){
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if(item.getType() != CROSSBOW) return;
-        if (!GunCreate.isGun(item)) return;
-
-        if (player.isSneaking()) {
-            GunCreate.setGun(item, 1, GunCreate.getBulletAmount(item));
-            player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(GunCreate.playerBaseSpeed);
-        } else {
-            GunCreate.setGun(item, 2, GunCreate.getBulletAmount(item));
-            player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(GunCreate.playerBaseSpeed * 0.7);
-        }
     }
 
     public void fellMagazine(){
@@ -151,7 +116,8 @@ public class GunEffect extends GunListener{
         if (team != null && inSameTeam(team, target)) return false;
         if (!enablePlayerDamage(target)) return false;
 
-        target.damage(0.001, player);
+        target.damage(0.01, player);
+
         double health = target.getHealth();
         double woundedHealth = health > damage ? health - damage : 0;
         target.setHealth(woundedHealth);
@@ -231,5 +197,21 @@ public class GunEffect extends GunListener{
         Vector vec = Calculation.vectorCalculation(locA, locB, 30);
         bullet.setVelocity(vec);
         bullet.setTicksLived(5985);
+    }
+
+    @Override
+    protected boolean tickTask() {
+        if (next % 2 != 0) return true;
+        Location loc = player.getLocation();
+
+        float pitch = loc.getPitch();
+        if (next == 2) loc.setPitch(pitch - 2);
+        else if (next == 4) loc.setPitch(pitch + 2);
+        else if (next == 6) return false;
+
+        Vector vec = player.getVelocity().clone();
+        player.teleport(loc);
+        player.setVelocity(vec);
+        return true;
     }
 }
